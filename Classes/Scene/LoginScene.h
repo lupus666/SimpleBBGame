@@ -21,6 +21,8 @@ private:
 	void createBackground();
 	void createLoginButton();
 
+	void initplayerBox();
+
 	void textFieldEvent(cocos2d::Ref* sender, cocos2d::ui::TextField::EventType event);
 
 };
