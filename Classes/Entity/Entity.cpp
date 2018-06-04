@@ -10,7 +10,7 @@ void Entity::setRadius(float radius)
 	_radius = radius;
 }
 
-int Entity::setScore()
+int Entity::getScore()
 {
 	return _score;
 }

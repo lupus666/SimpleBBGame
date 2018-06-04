@@ -10,7 +10,7 @@ class Entity : public Sprite
 public:
 	float getRadius();
 	void setRadius(float radius);
-	int get Score();
+	int getScore();
 	virtual void setScore(int score);
 protected:
 	float _radius;
