@@ -19,7 +19,7 @@ public:
 		NORMAL,
 		DIVIDE,
 		SPIT,
-		COMBINE
+		STATIC
 	};
 
 
@@ -46,22 +46,26 @@ public:
 	void updateDivision();
 	void resetPlayer();//复活
 
-	void spitSpore(Node*, Map<int, Spore*>&, int);
+	void spitSpore(Map<int, Spore*>&, int);
 	int countSpitSpore();
 
-	void setVector(Vec2);
-	Vec2 getVector();
+	void setVector(Vec2 v) { _vector = v; }//有点问题
+	Vec2 getVector() { return _vector; }
 
 	Rect getPlayerRect();//用以计算中心
 
-	std::string getName();
-	int getDivisionNum();
-	int getScore();
-	Vector<PlayerDivision*>& getDivisionlist();
+	std::string getName() { return _name; }
+	int getDivisionNum() { return _divisionNum; }
+	int getAllScore();
+	Vector<PlayerDivision*>& getDivisionlist() { return _divisionlist; }
 
-	bool divideFinish() {
+	void divideFinish() {
 		_state = State::NORMAL;
 	}
+	void thornFinish() {
+		_state = State::STATIC;
+	}
+
 
 	void setcombine(float t) { _combineEnable = true; }
 

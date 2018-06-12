@@ -166,7 +166,7 @@ bool Player::collideThorn(Thorn* thorn)
 
 					auto seq = Sequence::create(
 						EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
-						CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
+						CallFunc::create(CC_CALLBACK_0(Player::thornFinish, this)),
 						NULL
 					);
 
@@ -184,8 +184,261 @@ bool Player::collideThorn(Thorn* thorn)
 
 bool Player::collidePlayer(Player* player)
 {
+	bool flag = false;
+	for (int i = 0; i < _divisionlist.size(); i++)
+	{
+		auto division = _divisionlist.at(i);
+		Vec2 position = division->getPosition();
+		for (int j = 0; j < player->getDivisionlist().size(); j++)
+		{
+			float radius = division->getRadius();
+			auto division1 = player->getDivisionlist().at(j);
+			Vec2 position1 = division1->getPosition();
+			float radius1 = division1->getRadius();
+			float distance = position1.distance(position);
+			if (distance <= abs(radius - radius1))
+			{
+				int score = division->getScore();
+				int score1 = division1->getScore();
+				if (score >= score1 * MIN_EAT_MULTIPLE)
+				{
+					division->addScore(score1);
+					flag = true;
+					break;
+				}
+				else if (score1 >= score * MIN_EAT_MULTIPLE)
+				{
+					_divisionlist.eraseObject(division);
+					division->removeFromParentAndCleanup(true);
+					_divisionNum--;
+					i--;
+					flag = true;
+					break;
+				}
+			}
+		}
+	}
+	return flag;
+}
+
+void Player::updateDivision()//更新分身位置
+{
+	auto rect = this->getPlayerRect();
+	if (_state == State::STATIC)
+	{
+		for (auto division : _divisionlist)
+		{
+			if (division != NULL) {
+				Vec2 position = division->getPosition();
+				Vec2 vector = rect.origin - position;
+				vector.normalize();
+				division->setvector(vector);
+				float speed = PLAYER_STATIC_SPEED;
+				float dx = vector.x*speed;
+				float dy = vector.y*speed;
+				Vec2 newposition = Vec2(position.x + dx, position.y + dy);
+				float radius = division->getRadius();
+
+				if (newposition.x <= radius)newposition.x = radius;
+				if (newposition.x >= (MAP_WIDTH - radius))newposition.x = MAP_WIDTH - radius;
+				if (newposition.y <= radius)newposition.y = radius;
+				if (newposition.y >= MAP_HEIGHT - radius)newposition.y = MAP_HEIGHT - radius;
+
+				division->setPreposition(position);
+				division->setPosition(newposition);
+			}
+		}
+	}
+	if (_state == State::NORMAL || _state == State::SPIT)//
+	{
+		for (auto division : _divisionlist)
+		{
+			if (division != NULL)
+			{
+				Vec2 position = division->getPosition();
+				Vec2 vector = division->getvector();
+				float speed = division->getspeed();
+				Vec2 tvector = Vec2(vector.x*speed, vector.y*speed);
+				Vec2 nvector = rect.origin - position;
+				nvector.normalize();
+				nvector.x = nvector.x * PLAYER_MOVING_COMBINE_SPEED;
+				nvector.y = nvector.y * PLAYER_MOVING_COMBINE_SPEED;
+				float cosangle = cosf(Vec2::angle(tvector, nvector));
+				Vec2 newposition = Vec2::ZERO;
+				if (cosangle > 0 && cosangle < 1)
+				{
+					newposition = Vec2(position.x + tvector.x + nvector.x, position.y + tvector.y + nvector.y);
+				}
+				else newposition = Vec2(position.x + tvector.x, position.y + tvector.y);
+
+				float radius = division->getRadius();
+
+				if (newposition.x <= radius)newposition.x = radius;
+				if (newposition.x >= (MAP_WIDTH - radius))newposition.x = MAP_WIDTH - radius;
+				if (newposition.y <= radius)newposition.y = radius;
+				if (newposition.y >= MAP_HEIGHT - radius)newposition.y = MAP_HEIGHT - radius;
+
+				division->setPreposition(position);
+				division->setPosition(newposition);
+			}
+		}
+	}
+	if (_combineEnable)
+	{
+		for (auto division1 : _divisionlist)
+		{
+			if (division1 != NULL)
+			{
+				Vec2 position1 = division1->getPosition();
+				float radius1 = division1->getRadius();
+				for (auto division2 : _divisionlist)
+				{
+					if (division2 != NULL && division1 != division2)
+					{
+						Vec2 position2 = division2->getPosition();
+						float radius2 = division2->getRadius();
+						if (position2.distance(position1) <= abs(radius2 - radius1))
+						{
+							_divisionNum--;
+							
+							//_combineEnable = false;
+							//this->scheduleOnce(schedule_selector(Player::setcombine), 8);
+							int score = division1->getScore() + division2->getScore();
+							if (radius1 >= radius2)
+							{
+								division1->addScore(score);
+								_divisionlist.eraseObject(division2);
+								division2->removeFromParentAndCleanup(true);
+								return;
+							}
+							else
+							{
+								division2->addScore(score);
+								_divisionlist.eraseObject(division1);
+								division1->removeFromParentAndCleanup(true);
+								return;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+	/*if (!_combineEnable)
+	{
+		for (auto division1 : _divisionlist)
+		{
+			if (division1 != NULL)
+			{
+				Vec2 position1 = division1->getPosition();
+				float radius1 = division1->getRadius();
+				for (auto division2 : _divisionlist)
+				{
+					if (division2 != NULL && division1 != division2)
+					{
+						Vec2 position2 = division2->getPosition();
+						float radius2 = division2->getRadius();
+						float distance = position2.distance(position1);
+						if (distance <= (radius2 + radius1))
+						{
+							Vec2 oldposition1 = division1->getPreposition();
+							Vec2 oldposition2 = division2->getPreposition();
+							float olddistance = oldposition2.distance(oldposition1);
+
+						}
+					}
+				}
+			}
+		}
+	}*/
+}
+
+void Player::resetPlayer()
+{
+	int x = rand() % MAP_WIDTH;
+	int y = rand() % MAP_HEIGHT;
+	
+	auto division = Player::createDivision(Vec2(x, y), Vec2::ZERO, PLAYER_INITIAL_SCORE);
+	_map->addChild(division, PLAYER_INITIAL_SCORE);
+}
+
+int Player::getAllScore() 
+{
+	int score = 0;
 	for (auto division : _divisionlist)
 	{
-
+		if (division != NULL)
+		{
+			score += division->getScore();
+		}
 	}
+	return score;
+}
+
+Rect Player::getPlayerRect()
+{
+	float left, right, up, down;
+
+	auto division = _divisionlist.at(0);
+	if (division != NULL)
+	{
+		auto position = division->getPosition();
+		auto radius = division->getRadius();
+		left = position.x - radius;
+		right = position.x + radius;
+		up = position.y + radius;
+		down = position.y - radius;
+	}
+	
+	for (auto division1 : _divisionlist)
+	{
+		if (division1 != NULL)
+		{
+			auto position1 = division1->getPosition();
+			float radius1 = division1->getRadius();
+			if (left > (position1.x - radius1))left = (position1.x - radius1);
+			if (right < (position1.x + radius1))right = (position1.x + radius1);
+			if (up < (position1.y + radius1)) up = position1.y + radius1;
+			if (down > (position1.y - radius1))down = position1.y - radius1;
+		}
+	}
+	
+	Rect rect;
+	rect.size = Size(right - left, up - down);
+	rect.origin = Vec2((right + left) / 2, (up + down) / 2);
+	return rect;
+}
+
+void Player::spitSpore(Map<int,Spore*>& sporelist,int i)//int globalID ??
+{
+	for (auto division : _divisionlist)
+	{
+		if (division != NULL)
+		{
+			int score = division->getScore();
+			if (score >= PLAYER_MIN_SPIT_SCORE)
+			{
+				division->spitspore();
+				Vec2 position = division->getPosition();
+				Vec2 vector = division->getvector();
+				float angle = vector.getAngle();
+				float radius = division->getRadius();
+				Vec2 position1 = Vec2(position.x + cosf(angle)*radius, position.y + sinf(angle)*radius);
+				Spore* spore = Spore::create("SKIN/spore_1.png");
+				spore->setPosition(position1);
+
+				Vec2 dposition1 = Vec2(position1.x + SPORE_MIN_SPIT_DISTANCE * cosf(angle), position1.y + SPORE_MIN_SPIT_DISTANCE * sinf(angle));
+				auto action = EaseOut::create(MoveBy::create(0.5, dposition1), 1.8f);
+				spore->runAction(action);
+				_map->addChild(spore, spore->getScore());
+				sporelist.insert(i, spore);  //不太懂
+				i++;
+			}
+		}
+	}
+}
+
+int Player::countSpitSpore()
+{
+	
 }

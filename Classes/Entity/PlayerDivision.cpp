@@ -61,9 +61,9 @@ bool PlayerDivision::collideThorn(Thorn* thorn)
 	Vec2 position = this->getPosition();
 	Vec2 thornposition = thorn->getPosition();
 	int thornscore = thorn->getScore();
-	if (_score >= thornscore * 1.5)
+	if (_score >= thornscore * MIN_EAT_MULTIPLE)
 	{
-		if (thornposition.distance(position) <= (_radius - thorn->getRadius()))  //碰到刺会有特殊处理
+		if (thornposition.distance(position) <= abs(_radius - thorn->getRadius()))  //碰到刺会有特殊处理
 			return true;
 	}
 	return false;
@@ -129,4 +129,10 @@ void PlayerDivision::change()
 	Size size = this->getContentSize();
 	float scale = _radius * 2 / size.width;
 	this->setScale(scale);
+}
+
+void PlayerDivision::addScore(int score)
+{
+	_score += score;
+	change();
 }

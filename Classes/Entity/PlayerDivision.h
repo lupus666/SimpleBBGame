@@ -35,6 +35,7 @@ public:
 	Vec2 getPreposition();
 
 	void scorehalve();
+	void addScore(int);
 	void spitspore();
 
 	void change();
