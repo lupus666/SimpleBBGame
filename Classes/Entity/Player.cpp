@@ -179,7 +179,10 @@ bool Player::collideThorn(Thorn* thorn)
 	if (flag)
 	{
 		this->scheduleOnce(schedule_selector(Player::setcombine), 15);
+		return true;
 	}
+	return false;
+
 }
 
 bool Player::collidePlayer(Player* player)
@@ -409,7 +412,7 @@ Rect Player::getPlayerRect()
 	return rect;
 }
 
-void Player::spitSpore(Map<int,Spore*>& sporelist,int i)//int globalID ??
+void Player::spitSpore(Map<int,Spore*>& sporelist,int i)
 {
 	for (auto division : _divisionlist)
 	{
@@ -431,7 +434,7 @@ void Player::spitSpore(Map<int,Spore*>& sporelist,int i)//int globalID ??
 				auto action = EaseOut::create(MoveBy::create(0.5, dposition1), 1.8f);
 				spore->runAction(action);
 				_map->addChild(spore, spore->getScore());
-				sporelist.insert(i, spore);  //²»Ì«¶®
+				sporelist.insert(i, spore);
 				i++;
 			}
 		}
@@ -440,5 +443,16 @@ void Player::spitSpore(Map<int,Spore*>& sporelist,int i)//int globalID ??
 
 int Player::countSpitSpore()
 {
-	
+	int count = 0;
+	for (auto division : _divisionlist)
+	{
+		if (division != NULL)
+		{
+			if (division->getScore() > PLAYER_MIN_SPIT_SCORE)
+			{
+				count += 1;
+			}
+		}
+	}
+	return count;
 }

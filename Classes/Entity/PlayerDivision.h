@@ -29,7 +29,7 @@ public:
 	void setspeed(float);
 	float getspeed();
 
-	void setPlayerName(const std::string&);
+	void setPlayerName(const std::string);
 	
 	void setPreposition(const Vec2&);
 	Vec2 getPreposition();

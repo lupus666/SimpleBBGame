@@ -1,10 +1,17 @@
 #ifndef _Marco_H_
 #define _Marco_H_
 
-#define MAP_WIDTH 5000
-#define MAP_HEIGHT 4000
+#define MAP_WIDTH 4800
+#define MAP_HEIGHT 3600
+
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+
+#define MAP_DIVISION_X 6
+#define MAP_DIVISION_Y 8
 
 #define MAX_BEAN_NUM 4500
+#define MAX_DIVISION_BEAN_NUM 100
 
 
 #define MIN_EAT_MULTIPLE 1.25

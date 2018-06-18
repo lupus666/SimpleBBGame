@@ -15,7 +15,7 @@ Thorn* Thorn::create(const std::string& filename)
 
 bool Thorn::init(const std::string& filename)
 {
-	if (!Entity::initWithSpriteFrameName(filename))
+	if (!Entity::initWithFile(filename))
 	{
 		return false;
 	}

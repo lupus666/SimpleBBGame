@@ -27,6 +27,7 @@ bool PlayerDivision::init(const std::string& name,int skinID,int score)
 	_score = score;
 	_skinID = skinID;
 	change();
+	return true;
 }
 
 
@@ -89,9 +90,9 @@ float PlayerDivision::getspeed()
 	return _speed;
 }
 
-void PlayerDivision::setPlayerName(const std::string& name)
+void PlayerDivision::setPlayerName(const std::string name)
 {
-	_nameLabel = Label::createWithTTF(name.c_str(), "Marker Felt.ttf", 22);
+	_nameLabel = Label::createWithTTF(name.c_str(), "fonts/MarkerFelt.ttf", 22);
 	Size size = this->getContentSize();
 	_nameLabel->setPosition(Vec2(size.width / 2, size.height / 2));
 	this->addChild(_nameLabel);
@@ -121,7 +122,7 @@ void PlayerDivision::spitspore()
 
 void PlayerDivision::change()
 {
-	_radius = PLAYER_INITIAL_RADIUS * PLAYER_INITIAL_RADIUS*_score / PLAYER_INITIAL_SCORE;
+	_radius = sqrt(PLAYER_INITIAL_RADIUS * PLAYER_INITIAL_RADIUS*_score / PLAYER_INITIAL_SCORE);
 	_speed = (PLAYER_INITIAL_RADIUS / _radius)*PLAYER_INITIAL_SPEED + 1;
 
 	this->setLocalZOrder(_score);
