@@ -124,7 +124,6 @@ bool Player::collideSpore(Spore* spore)
 
 bool Player::collideThorn(Thorn* thorn)
 {
-	bool flag = false;
 	for (auto division : _divisionlist)
 	{
 		if (division != NULL)
@@ -148,7 +147,7 @@ bool Player::collideThorn(Thorn* thorn)
 				}
 
 				Vec2 position = division->getPosition();
-				for (int i = 0; i < _divisionNum; i++)
+				for (int i = 0; i < PLAYER_MAX_THORN_DIVISION; i++)
 				{
 					if (_divisionNum + 1 > PLAYER_MAX_DIVISION)
 					{
@@ -157,7 +156,6 @@ bool Player::collideThorn(Thorn* thorn)
 
 					_state = State::DIVIDE;
 					_combineEnable = false;
-					flag = true;
 
 					Vec2 vector = Vec2(cosf(6.28*i / PLAYER_MAX_DIVISION), sinf(6.28*i / PLAYER_MAX_DIVISION));
 					auto division1 = Player::createDivision(position, vector, averagescore);
@@ -171,15 +169,13 @@ bool Player::collideThorn(Thorn* thorn)
 					);
 
 					division1->runAction(seq);
+					
 				}
+				this->scheduleOnce(schedule_selector(Player::setcombine), 15);
+				return true;
 				
 			}
 		}
-	}
-	if (flag)
-	{
-		this->scheduleOnce(schedule_selector(Player::setcombine), 15);
-		return true;
 	}
 	return false;
 
@@ -304,8 +300,8 @@ void Player::updateDivision()//更新分身位置
 						{
 							_divisionNum--;
 							
-							//_combineEnable = false;
-							//this->scheduleOnce(schedule_selector(Player::setcombine), 8);
+							_combineEnable = false;
+							this->scheduleOnce(schedule_selector(Player::setcombine), 8);
 							int score = division1->getScore() + division2->getScore();
 							if (radius1 >= radius2)
 							{
@@ -455,4 +451,18 @@ int Player::countSpitSpore()
 		}
 	}
 	return count;
+}
+
+void Player::setVector(Vec2 v)
+{
+	_state = State::NORMAL;
+
+	for (auto division : _divisionlist)
+	{
+		if (division != NULL)
+		{
+			division->setvector(v);
+		}
+	}
+	_vector = v;
 }

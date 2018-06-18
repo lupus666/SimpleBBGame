@@ -49,7 +49,7 @@ public:
 	void spitSpore(Map<int, Spore*>&, int);
 	int countSpitSpore();
 
-	void setVector(Vec2 v) { _vector = v; }//有点问题
+	void setVector(Vec2);
 	Vec2 getVector() { return _vector; }
 
 	Rect getPlayerRect();//用以计算中心

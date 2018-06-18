@@ -50,6 +50,10 @@ public:
 	void spitSpore();
 	void divide();
 
+	bool onTouchBegan(Touch* touch,Event *event);
+	void onTouchMove(Touch* touch,Event *event);
+	void onTouchEnded(Touch* touch,Event *event);
+
 private:
 	Node * _map;
 	Player* _player;

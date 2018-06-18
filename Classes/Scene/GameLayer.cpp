@@ -21,12 +21,15 @@ bool GameLayer::init()
 	_map->setContentSize(Size(MAP_WIDTH, MAP_HEIGHT));
 	this->addChild(_map, 0);
 
+	initData();
 
-	initPlayer();
-	initBean();
-	//initThorn();
-	addThorn(1);
-	updateView();
+	auto listener = EventListenerTouchOneByOne::create();
+	listener->onTouchBegan = CC_CALLBACK_2(GameLayer::onTouchBegan, this);
+	listener->onTouchEnded = CC_CALLBACK_2(GameLayer::onTouchEnded, this);
+
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+
+	this->scheduleUpdate();
 	return true;
 }
 
@@ -93,42 +96,20 @@ void GameLayer::addThorn(float t)
 
 void GameLayer::collideBean(Player* player)
 {
-	Rect rect = player->getPlayerRect();
-	Vec2 position = player->getPosition();
-
-	Vec2 leftdown = Vec2(rect.origin.x - rect.size.width / 2, rect.origin.y - rect.size.height / 2);
-	Vec2 rightup = Vec2(rect.origin.x + rect.size.width / 2, rect.origin.y + rect.size.height / 2);
-
-	int leftdownX = leftdown.x / MAP_DIVISION_X;
-	int leftdownY = leftdown.y / MAP_DIVISION_Y;
-	int rightupX = (rightup.x / MAP_DIVISION_X);
-	int rightupY = (rightup.y / MAP_DIVISION_Y);
-
-	if (leftdownX < 0) { leftdownX = 0; }
-	if (leftdownY < 0) { leftdownY = 0; }
-	if (rightupX > (MAP_DIVISION_X - 1)) { rightupX = MAP_DIVISION_X - 1; }
-	if (rightupY > (MAP_DIVISION_Y - 1)) { rightupY = MAP_DIVISION_Y - 1; }
-
-
-	for (int i = leftdownX; i <= rightupX; i++)
+	for (auto bean : _beanlist)
 	{
-		for (int j = leftdownY; j <= rightupY; j++)
+		if (bean->isVisible())
 		{
-			int m = i * MAP_DIVISION_Y + j;
-			for (int n = m * 100; n < (m + 1) * 100; n++)
+			if (player->collideBean(bean))
 			{
-				auto bean = _beanlist.at(m);
-				if (bean->isVisible())
-				{
-					if (player->collideBean(bean))
-					{
-						bean->setVisible(false);
-						float t = rand() % 10 + 10;
+				bean->setVisible(false);
+				float time = rand() % 10 + 10;
 
-						auto seq = Sequence::create(DelayTime::create(t), CallFunc::create(CC_CALLBACK_0(GameLayer::resetBean, this, bean)));
-						bean->runAction(seq);
-					}
-				}
+				auto seq = Sequence::create(
+					DelayTime::create(time),
+					CallFunc::create(CC_CALLBACK_0(GameLayer::resetBean, this, bean)),
+					NULL);
+				bean->runAction(seq);
 			}
 		}
 	}
@@ -288,15 +269,39 @@ void GameLayer::updateView()//              +++++++++++++++++++++++++++++++++++
 
 void GameLayer::spitSpore()
 {
-
+	//_player->spitSpore(_sporeMap);
 }
 
 void GameLayer::divide()
 {
-
+	_player->dividePlayer();
 }
 
 void GameLayer::update(float t)
+{
+	updateBean();
+	updatePlayer();
+	updateSpore();
+	updateThorn();
+	updateView();
+	collidePlayer();
+}
+
+void GameLayer::onTouchEnded(Touch* touch,Event *event)
+{
+	auto position = touch->getLocation();
+	auto position1 = _player->getPosition();
+	auto vector = _player->convertToWorldSpace(position);
+	//auto vector = Vec2(position.x - position1.x, position.y - position1.y);
+	vector.normalize();
+	_player->setVector(vector);
+}
+
+bool GameLayer::onTouchBegan(Touch* touch,Event * event)
+{
+	return true;
+}
+void GameLayer::onTouchMove(Touch*touch,Event *event)
 {
 
 }
