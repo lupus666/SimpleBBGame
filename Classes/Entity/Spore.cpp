@@ -15,7 +15,7 @@ Spore* Spore::create(const std::string& filename)
 }
 bool Spore::init(const std::string& filename)
 {
-	if (!Entity::initWithSpriteFrameName(filename))
+	if (!Entity::initWithFile(filename))
 	{
 		return false;
 	}

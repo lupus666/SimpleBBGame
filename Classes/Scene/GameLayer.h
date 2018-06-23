@@ -54,6 +54,9 @@ public:
 	void onTouchMove(Touch* touch,Event *event);
 	void onTouchEnded(Touch* touch,Event *event);
 
+	void onKeyPressed(EventKeyboard::KeyCode keycode, Event * event);
+	void onKeyReleased(EventKeyboard::KeyCode keycode, Event* event);
+
 private:
 	Node * _map;
 	Player* _player;
@@ -62,7 +65,7 @@ private:
 	Map<int,Thorn*> _thornMap;
 	Map<int, Spore*> _sporeMap;
 	float _mapscale;
-
+	int sporeID;
 
 };
 

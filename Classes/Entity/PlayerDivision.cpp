@@ -48,7 +48,7 @@ bool PlayerDivision::collideSpore(Spore* spore)
 {
 	Vec2 position = this->getPosition();
 	Vec2 sporeposition = spore->getPosition();
-	if (sporeposition.distance(position) <= _radius)
+	if (sporeposition.distance(position) <= _radius - 1)
 	{
 		_score += spore->getScore();
 		change();

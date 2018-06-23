@@ -18,9 +18,6 @@ bool GameScene::init()
 
 	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BEAN/bean.plist","BEAN/bean.png");
 
-
-
-
 	auto gamelayer = GameLayer::create();
 	this->addChild(gamelayer, 1);
 	return true;

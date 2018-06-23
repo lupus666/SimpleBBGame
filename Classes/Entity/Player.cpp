@@ -50,38 +50,40 @@ PlayerDivision* Player::createDivision(Vec2 position, Vec2 vector, int score)
 void Player::dividePlayer()
 {
 	bool flag = false;
-	for (int i = 0; i < _divisionlist.size(); i++)
+	int size = _divisionlist.size();
+	for (int i = 0; i < size; i++)
 	{
 		auto division = _divisionlist.at(i);
 		if (division->getScore() >= PLAYER_MIN_DIVIDE_SCORE)
 		{
-			if (_divisionlist.size() + 1 > PLAYER_MAX_DIVISION)
+			if (_divisionNum + 1 > PLAYER_MAX_DIVISION)
 			{
 				break;
 			}
+
+
+			this->unscheduleAllCallbacks();
+			_state = State::DIVIDE;
+			_combineEnable = false;
+			flag = true;
+
+			division->scorehalve();
+			Vec2 position = division->getPosition();
+			int score = division->getScore();
+			auto subdivision = this->createDivision(position, _vector, score);
+			_map->addChild(subdivision);
+
+			float angle = _vector.getAngle();
+			float distance = division->getRadius() + PLAYER_MIN_DIVISION_DISTANCE;
+			Vec2 newposition = Vec2(distance*cosf(angle), distance*sinf(angle));
+
+			auto seq = Sequence::create(
+				EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
+				CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
+				NULL);
+
+			subdivision->runAction(seq);
 		}
-
-		//this->unscheduleAllCallbacks();
-		_state = State::DIVIDE;
-		_combineEnable = false;
-		flag = true;
-
-		division->scorehalve();
-		Vec2 position = division->getPosition();
-		int score = division->getScore();
-		auto subdivision = this->createDivision(position, _vector, score);
-		_map->addChild(subdivision);
-
-		float angle = _vector.getAngle();
-		float distance = division->getRadius() + PLAYER_MIN_DIVISION_DISTANCE;
-		Vec2 newposition = Vec2(distance*cosf(angle), distance*sinf(angle));
-
-		auto seq = Sequence::create(
-			EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
-			CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
-			NULL);
-
-		subdivision->runAction(seq);
 	}
 	if (flag)
 	{
@@ -107,15 +109,18 @@ bool Player::collideBean(Bean* bean)
 }
 
 bool Player::collideSpore(Spore* spore)
-{
-	for (auto division : _divisionlist)
+{	
+	if (_state != State::SPIT) 
 	{
-		if (division != NULL)
+		for (auto division : _divisionlist)
 		{
-			if (division->collideSpore(spore))
+			if (division != NULL)
 			{
-				division->setLocalZOrder(division->getScore());
-				return true;
+				if (division->collideSpore(spore))
+				{
+					division->setLocalZOrder(division->getScore());
+					return true;
+				}
 			}
 		}
 	}
@@ -350,6 +355,47 @@ void Player::updateDivision()//更新分身位置
 			}
 		}
 	}*/
+	if (!_combineEnable)//分身会进行碰撞检测，移动后如果产生碰撞则取消移动
+	{
+		for (auto division1 : _divisionlist)
+		{
+			if (division1 != NULL)
+			{
+				for (auto division2 : _divisionlist)
+				{
+					if (division2 != NULL && division2 != division1)
+					{
+						Vec2 position1 = division1->getPosition();
+						Vec2 position2 = division2->getPosition();
+						float radius1 = division1->getRadius();
+						float radius2 = division2->getRadius();
+						float distance = position1.distance(position2);
+						if (distance < radius1 + radius2)
+						{
+							Vec2 oldPosition1 = division1->getPreposition();
+							Vec2 oldPosition2 = division2->getPreposition();
+							float oldDistance = oldPosition1.distance(oldPosition2);
+							float fixDistance = 0;
+							if (oldDistance <= radius1 + radius2)
+							{
+								fixDistance = 2;
+							}
+							else
+							{
+								fixDistance = (radius1 + radius2 - distance);
+							}
+
+							Vec2 v = position2 - position1;
+							float angle = v.getAngle();
+							Vec2 newPosition1 = Vec2(position1.x - cosf(angle)*fixDistance, position1.y - sinf(angle)*fixDistance);
+							Vec2 newPosition2 = Vec2(position2.x + sinf(angle)*fixDistance, position2.y + sinf(angle)*fixDistance);
+							division1->setPosition(newPosition1);
+						}
+					}
+				}
+			}
+		}
+	}
 }
 
 void Player::resetPlayer()
@@ -408,30 +454,39 @@ Rect Player::getPlayerRect()
 	return rect;
 }
 
-void Player::spitSpore(Map<int,Spore*>& sporelist,int i)
+void Player::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
 {
 	for (auto division : _divisionlist)
 	{
 		if (division != NULL)
 		{
+			
 			int score = division->getScore();
 			if (score >= PLAYER_MIN_SPIT_SCORE)
 			{
+				_state = State::SPIT;
 				division->spitspore();
 				Vec2 position = division->getPosition();
 				Vec2 vector = division->getvector();
 				float angle = vector.getAngle();
 				float radius = division->getRadius();
-				Vec2 position1 = Vec2(position.x + cosf(angle)*radius, position.y + sinf(angle)*radius);
+				Vec2 position1 = Vec2(position.x + cosf(angle)*(radius+1), position.y + sinf(angle)*(radius+1));
 				Spore* spore = Spore::create("SKIN/spore_1.png");
 				spore->setPosition(position1);
 
 				Vec2 dposition1 = Vec2(position1.x + SPORE_MIN_SPIT_DISTANCE * cosf(angle), position1.y + SPORE_MIN_SPIT_DISTANCE * sinf(angle));
-				auto action = EaseOut::create(MoveBy::create(0.5, dposition1), 1.8f);
-				spore->runAction(action);
+				auto action = EaseOut::create(MoveTo::create(0.5, dposition1), 1.8f);
+				auto seq1 = Sequence::create(action,CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),NULL);
 				_map->addChild(spore, spore->getScore());
-				sporelist.insert(i, spore);
-				i++;
+				float time = 0.1;
+				auto seq2 = Sequence::create(
+					DelayTime::create(time),
+					CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
+					NULL);
+				spore->runAction(seq1);
+				spore->runAction(seq2);
+				sporelist.insert(sporeID, spore);
+				sporeID++;
 			}
 		}
 	}

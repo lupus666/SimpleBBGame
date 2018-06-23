@@ -4,7 +4,10 @@
 
 GameLayer::~GameLayer()
 {
-
+	_rivalMap.clear();
+	_beanlist.clear();
+	_sporeMap.clear();
+	_thornMap.clear();
 }
 
 bool GameLayer::init()
@@ -23,11 +26,19 @@ bool GameLayer::init()
 
 	initData();
 
-	auto listener = EventListenerTouchOneByOne::create();
-	listener->onTouchBegan = CC_CALLBACK_2(GameLayer::onTouchBegan, this);
-	listener->onTouchEnded = CC_CALLBACK_2(GameLayer::onTouchEnded, this);
+	auto touchlistener = EventListenerTouchOneByOne::create();
+	touchlistener->onTouchBegan = CC_CALLBACK_2(GameLayer::onTouchBegan, this);
+	touchlistener->onTouchEnded = CC_CALLBACK_2(GameLayer::onTouchEnded, this);
 
-	_eventDispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+	auto keyboardlistener = EventListenerKeyboard::create();
+
+	keyboardlistener->onKeyPressed = CC_CALLBACK_2(GameLayer::onKeyPressed, this);
+	keyboardlistener->onKeyReleased = CC_CALLBACK_2(GameLayer::onKeyReleased, this);
+
+
+
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(keyboardlistener, this);
+	_eventDispatcher->addEventListenerWithSceneGraphPriority(touchlistener, this);
 
 	this->scheduleUpdate();
 	return true;
@@ -39,6 +50,7 @@ void GameLayer::initData()
 	initBean();
 	initPlayer();
 	initThorn();
+	sporeID = 0;
 }
 
 void GameLayer::initBean()
@@ -269,7 +281,7 @@ void GameLayer::updateView()//              +++++++++++++++++++++++++++++++++++
 
 void GameLayer::spitSpore()
 {
-	//_player->spitSpore(_sporeMap);
+	_player->spitSpore(_sporeMap,sporeID);
 }
 
 void GameLayer::divide()
@@ -291,8 +303,9 @@ void GameLayer::onTouchEnded(Touch* touch,Event *event)
 {
 	auto position = touch->getLocation();
 	auto position1 = _player->getPosition();
-	auto vector = _player->convertToWorldSpace(position);
+	auto vector = _player->convertToWorldSpace(position);//!!!
 	//auto vector = Vec2(position.x - position1.x, position.y - position1.y);
+	//auto vector = Vec2(-1, -1);
 	vector.normalize();
 	_player->setVector(vector);
 }
@@ -302,6 +315,23 @@ bool GameLayer::onTouchBegan(Touch* touch,Event * event)
 	return true;
 }
 void GameLayer::onTouchMove(Touch*touch,Event *event)
+{
+
+}
+
+void GameLayer::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)
+{
+	if (keycode == EventKeyboard::KeyCode::KEY_D)
+	{
+		divide();
+	}
+	if (keycode == EventKeyboard::KeyCode::KEY_S)
+	{
+		spitSpore();
+	}
+}
+
+void GameLayer::onKeyReleased(EventKeyboard::KeyCode keycode, Event* event)
 {
 
 }

@@ -46,7 +46,7 @@ public:
 	void updateDivision();
 	void resetPlayer();//¸´»î
 
-	void spitSpore(Map<int, Spore*>&, int);
+	void spitSpore(Map<int, Spore*>&, int&);
 	int countSpitSpore();
 
 	void setVector(Vec2);
