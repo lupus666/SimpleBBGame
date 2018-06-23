@@ -13,6 +13,12 @@
     <Filter Include="src\Scene">
       <UniqueIdentifier>{5a9dd301-89c1-4a91-b5d1-9216baff4416}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Entity">
+      <UniqueIdentifier>{9aa69e38-3fd1-40b9-9116-7e4001578e67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Operator">
+      <UniqueIdentifier>{1ac36b7d-7414-4d4d-85f8-62bf3ed814a9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -27,6 +33,39 @@
     <ClCompile Include="..\Classes\Scene\LoginScene.cpp">
       <Filter>src\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Entity.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Bean.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Thorn.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Spore.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\Player.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Entity\PlayerDivision.cpp">
+      <Filter>src\Entity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scene\GameScene.cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Scene\GameLayer.cpp">
+      <Filter>src\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Operator\operator.cpp">
+      <Filter>src\Operator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Operator\keyboard.cpp">
+      <Filter>src\Operator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Classes\Operator\mouse.cpp">
+      <Filter>src\Operator</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -40,6 +79,42 @@
     </ClInclude>
     <ClInclude Include="..\Classes\Scene\LoginScene.h">
       <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Entity.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Bean.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Thorn.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Spore.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\Player.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Entity\PlayerDivision.h">
+      <Filter>src\Entity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Macro.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scene\GameScene.h">
+      <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Scene\GameLayer.h">
+      <Filter>src\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Operator\operator.h">
+      <Filter>src\Operator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Operator\keyboard.h">
+      <Filter>src\Operator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Classes\Operator\mouse.h">
+      <Filter>src\Operator</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

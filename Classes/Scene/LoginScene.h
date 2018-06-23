@@ -12,6 +12,18 @@ public:
 	virtual bool init();
 
 	CREATE_FUNC(LoginScene);
+private:
+
+	cocos2d::ui::TextField* playernameInput;
+
+	cocos2d::Sprite* playernameBG;
+
+	void createBackground();
+	void createLoginButton();
+
+	void initplayerBox();
+
+	void textFieldEvent(cocos2d::Ref* sender, cocos2d::ui::TextField::EventType event);
 
 };
 

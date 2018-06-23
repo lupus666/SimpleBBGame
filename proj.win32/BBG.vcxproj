@@ -149,13 +149,36 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Classes\AppDelegate.cpp" />
+    <ClCompile Include="..\Classes\Entity\Bean.cpp" />
+    <ClCompile Include="..\Classes\Entity\Entity.cpp" />
+    <ClCompile Include="..\Classes\Entity\Player.cpp" />
+    <ClCompile Include="..\Classes\Entity\PlayerDivision.cpp" />
+    <ClCompile Include="..\Classes\Entity\Spore.cpp" />
+    <ClCompile Include="..\Classes\Entity\Thorn.cpp" />
     <ClCompile Include="..\Classes\HelloWorldScene.cpp" />
+    <ClCompile Include="..\Classes\Operator\keyboard.cpp" />
+    <ClCompile Include="..\Classes\Operator\mouse.cpp" />
+    <ClCompile Include="..\Classes\Operator\operator.cpp" />
+    <ClCompile Include="..\Classes\Scene\GameLayer.cpp" />
+    <ClCompile Include="..\Classes\Scene\GameScene.cpp" />
     <ClCompile Include="..\Classes\Scene\LoginScene.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Classes\AppDelegate.h" />
+    <ClInclude Include="..\Classes\Entity\Bean.h" />
+    <ClInclude Include="..\Classes\Entity\Entity.h" />
+    <ClInclude Include="..\Classes\Entity\Player.h" />
+    <ClInclude Include="..\Classes\Entity\PlayerDivision.h" />
+    <ClInclude Include="..\Classes\Entity\Spore.h" />
+    <ClInclude Include="..\Classes\Entity\Thorn.h" />
     <ClInclude Include="..\Classes\HelloWorldScene.h" />
+    <ClInclude Include="..\Classes\Macro.h" />
+    <ClInclude Include="..\Classes\Operator\keyboard.h" />
+    <ClInclude Include="..\Classes\Operator\mouse.h" />
+    <ClInclude Include="..\Classes\Operator\operator.h" />
+    <ClInclude Include="..\Classes\Scene\GameLayer.h" />
+    <ClInclude Include="..\Classes\Scene\GameScene.h" />
     <ClInclude Include="..\Classes\Scene\LoginScene.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
