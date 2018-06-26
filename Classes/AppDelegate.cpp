@@ -1,6 +1,7 @@
 #include "AppDelegate.h"
-#include "Classes\Scene\LoginScene.h"
-#include"Classes\Scene\GameScene.h"
+#include "Classes\Scene\HelloWorldScene.h"
+
+
 
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -95,11 +96,16 @@ bool AppDelegate::applicationDidFinishLaunching() {
     register_all_packages();
 
     // create a scene. it's an autorelease object
-    auto scene = GameScene::createScene();
+    auto scene = HelloWorld::createScene();
+
 
     // run
     director->runWithScene(scene);
 
+	//��ʼ��bgm
+	SimpleAudioEngine::getInstance()->preloadBackgroundMusic(bg_music_1);
+	//��ʼ��sound effect
+	SimpleAudioEngine::getInstance()->preloadEffect(sound_1);
     return true;
 }
 

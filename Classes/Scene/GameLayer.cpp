@@ -1,4 +1,5 @@
 #include"GameLayer.h"
+#include"MainScene.h"
 
 
 
@@ -84,7 +85,8 @@ void GameLayer::initPlayer()  //+++++++++
 {
 	float x = rand() % MAP_WIDTH;
 	float y = rand() % MAP_HEIGHT;
-	_player = Player::create("TEST", Vec2(x, y), _map, 1);
+
+	_player = Player::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, rand()%8 + 1);
 	_player->setLocalZOrder(_player->getAllScore());
 	_map->addChild(_player);
 }
@@ -329,7 +331,10 @@ void GameLayer::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)
 	{
 		spitSpore();
 	}
-}
+	if (keycode == EventKeyboard::KeyCode::KEY_ESCAPE)
+	{
+		Director::getInstance()->replaceScene(TransitionFade::create(0.5, Main::createScene()));
+	}
 
 void GameLayer::onKeyReleased(EventKeyboard::KeyCode keycode, Event* event)
 {
