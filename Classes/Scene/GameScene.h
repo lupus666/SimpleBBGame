@@ -3,7 +3,8 @@
 
 #include"cocos2d.h"
 #include"ui\CocosGUI.h"
-
+#include"SystemHeader.h"
+#include"MainScene.h"
 
 class GameScene :public cocos2d::Scene
 {
@@ -13,7 +14,7 @@ public:
 	
 	CREATE_FUNC(GameScene);
 
-
+	void menuReturnCallback(cocos2d::Ref* pSender);
 };
 #endif // !_GameScene_H_
 

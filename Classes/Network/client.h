@@ -56,7 +56,12 @@ public:
 		{
 			return reply;
 		}
-
+		else
+		{
+			MapInfo fault;
+			fault.set_beanseed(0);
+			return fault;
+		}
 	}
 
 private:
