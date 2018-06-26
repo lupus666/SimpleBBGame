@@ -3,6 +3,7 @@
 
 #include"cocos2d.h"
 #include"ui\CocosGUI.h"
+
 #include"SystemHeader.h"
 #include"MainScene.h"
 
@@ -13,6 +14,7 @@ public:
 	virtual bool init();
 	
 	CREATE_FUNC(GameScene);
+
 
 	void menuReturnCallback(cocos2d::Ref* pSender);
 };

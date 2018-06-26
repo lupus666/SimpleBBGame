@@ -2,6 +2,7 @@
 #include "Classes\Scene\HelloWorldScene.h"
 
 
+
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -97,12 +98,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // create a scene. it's an autorelease object
     auto scene = HelloWorld::createScene();
 
+
     // run
     director->runWithScene(scene);
 
-	//³õÊ¼»¯bgm
+	//ï¿½ï¿½Ê¼ï¿½ï¿½bgm
 	SimpleAudioEngine::getInstance()->preloadBackgroundMusic(bg_music_1);
-	//³õÊ¼»¯sound effect
+	//ï¿½ï¿½Ê¼ï¿½ï¿½sound effect
 	SimpleAudioEngine::getInstance()->preloadEffect(sound_1);
     return true;
 }

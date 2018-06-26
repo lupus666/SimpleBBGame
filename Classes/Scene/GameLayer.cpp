@@ -2,6 +2,7 @@
 #include"MainScene.h"
 
 
+
 GameLayer::~GameLayer()
 {
 	_rivalMap.clear();
@@ -84,6 +85,7 @@ void GameLayer::initPlayer()  //+++++++++
 {
 	float x = rand() % MAP_WIDTH;
 	float y = rand() % MAP_HEIGHT;
+
 	_player = Player::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, rand()%8 + 1);
 	_player->setLocalZOrder(_player->getAllScore());
 	_map->addChild(_player);
@@ -333,7 +335,6 @@ void GameLayer::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)
 	{
 		Director::getInstance()->replaceScene(TransitionFade::create(0.5, Main::createScene()));
 	}
-}
 
 void GameLayer::onKeyReleased(EventKeyboard::KeyCode keycode, Event* event)
 {
