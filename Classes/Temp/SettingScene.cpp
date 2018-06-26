@@ -137,4 +137,3 @@ void Setting::menuMusicToggleCallback(Ref* pSender)
 		SimpleAudioEngine::getInstance()->playBackgroundMusic(bg_music_2, true);
 	}
 }
-}

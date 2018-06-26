@@ -3,7 +3,7 @@
 
 #include "cocos2d.h"
 #include "SystemHeader.h"
-#include "MyUtility.h"
+//#include "MyUtility.h"
 
 class Setting : public cocos2d::Layer
 {

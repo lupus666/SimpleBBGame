@@ -1,4 +1,4 @@
-#include "HelloWorldScene.h"
+#include "Temp\HelloWorldScene.h"
 
 USING_NS_CC;
 
@@ -103,7 +103,7 @@ void HelloWorld::update(float dt)
 	progresstime->setPercentage(ct);
 	if (ct >= 100)
 	{
-		TransitionFade *tScene = CCTransitionFade::create(2, Main::createScene(), ccWHITE);
+		TransitionFade *tScene = CCTransitionFade::create(2, Main::createScene(), Color3B::WHITE);
 		Director::sharedDirector()->replaceScene(tScene);
 	}
 }

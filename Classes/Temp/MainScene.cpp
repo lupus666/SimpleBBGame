@@ -42,7 +42,7 @@ bool Main::init()
 	this->addChild(mu);
 
 	
-	MenuItemImage *
+	//MenuItemImage *
 
 
 
@@ -60,7 +60,7 @@ void Main::menuItemCallback(cocos2d::Ref *sender)
 	switch (menuItem->getTag())
 	{
 	case ActionType::MenuItemStart:
-		tsc = TransitionFade::create(1.0f, Game::createScene());
+		tsc = TransitionFade::create(1.0f, GameScene::createScene());
 		break;
 	case ActionType::MenuItemSetting:
 		tsc = TransitionFade::create(1.0f, Setting::createScene());
