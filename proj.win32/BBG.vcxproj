@@ -129,9 +129,9 @@ xcopy "$(ProjectDir)..\Resources" "$(OutDir)" /D /E /I /F /Y
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>libcurl.lib;%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END);grpc.lib;grpc++.lib;gpr.lib;libprotobufd.lib;ssl.lib;crypto.lib;zlibstaticd.lib</AdditionalDependencies>
+      <AdditionalDependencies>libcurl.lib;%(AdditionalDependencies);$(_COCOS_LIB_WIN32_BEGIN);$(_COCOS_LIB_WIN32_END);grpc.lib;grpc++.lib;gpr.lib;libprotobuf.lib;ssl.lib;crypto.lib;zlibstatic.lib</AdditionalDependencies>
       <OutputFile>$(OutDir)$(ProjectName).exe</OutputFile>
-      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories);$(_COCOS_LIB_PATH_WIN32_BEGIN);$(_COCOS_LIB_PATH_WIN32_END);D:\grpc\grpc\.build\Debug;D:\grpc\grpc\.build\third_party\boringssl\crypto\Debug;D:\grpc\grpc\.build\third_party\boringssl\ssl\Debug;D:\grpc\grpc\.build\third_party\protobuf\Debug;D:\grpc\grpc\.build\third_party\zlib\Debug</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories);$(_COCOS_LIB_PATH_WIN32_BEGIN);$(_COCOS_LIB_PATH_WIN32_END);D:\grpc\grpc\.build\Release;D:\grpc\grpc\.build\third_party\boringssl\crypto\Release;D:\grpc\grpc\.build\third_party\boringssl\ssl\Release;D:\grpc\grpc\.build\third_party\protobuf\Release;D:\grpc\grpc\.build\third_party\zlib\Release</AdditionalLibraryDirectories>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>

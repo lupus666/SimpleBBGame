@@ -6,9 +6,9 @@
 #include"Macro.h"
 
 
-Player* Player::create(const std::string& name, Vec2 position, Node* map, int skinID)
+PlayerL* PlayerL::create(const std::string& name, Vec2 position, Node* map, int skinID)
 {
-	Player* player = new Player();
+	PlayerL* player = new PlayerL();
 	if (player&&player->init(name, position, map, skinID))
 	{
 		player->autorelease();
@@ -18,7 +18,7 @@ Player* Player::create(const std::string& name, Vec2 position, Node* map, int sk
 	return nullptr;
 }
 
-bool Player::init(const std::string& name, Vec2 position, Node* map, int skinID)
+bool PlayerL::init(const std::string& name, Vec2 position, Node* map, int skinID)
 {
 	if (!Node::init())
 	{
@@ -29,12 +29,44 @@ bool Player::init(const std::string& name, Vec2 position, Node* map, int skinID)
 	_name = name;
 	_skinID = skinID;
 	_state = State::NORMAL;
+	_divideTimes = 0;
+	_spitTimes = 0;
 	auto division = this->createDivision(position,Vec2::ZERO ,PLAYER_INITIAL_SCORE);
 	_map->addChild(division, PLAYER_INITIAL_SCORE);
 	return true;
 }
 
-PlayerDivision* Player::createDivision(Vec2 position, Vec2 vector, int score)
+PlayerL* PlayerL::create(const std::string& name, Vec2 position, Vec2 vector, Node* map, int skinID, int dTimes, int sTimes)
+{
+	PlayerL* player = new PlayerL();
+	if (player&&player->init(name, position, vector, map, skinID, dTimes, sTimes))
+	{
+		player->autorelease();
+		return player;
+	}
+	CC_SAFE_DELETE(player);
+	return nullptr;
+}
+
+bool PlayerL::init(const std::string& name, Vec2 position, Vec2 vector, Node* map, int skinID,int dTimes, int sTimes)
+{
+	if (!Node::init())
+	{
+		return false;
+	}
+
+	_map = map;
+	_name = name;
+	_skinID = skinID;
+	_state = State::NORMAL;
+	_vector = vector;
+	_divideTimes = dTimes;
+	_spitTimes = sTimes;
+
+	return true;
+}
+
+PlayerDivision* PlayerL::createDivision(Vec2 position, Vec2 vector, int score)
 {
 	auto division = PlayerDivision::create(_name, _skinID, score);
 	division->setPosition(position);
@@ -47,8 +79,9 @@ PlayerDivision* Player::createDivision(Vec2 position, Vec2 vector, int score)
 	return division;
 }
 
-void Player::dividePlayer()
+void PlayerL::dividePlayer()
 {
+	_divideTimes += 1;
 	bool flag = false;
 	int size = _divisionlist.size();
 	for (int i = 0; i < size; i++)
@@ -79,7 +112,7 @@ void Player::dividePlayer()
 
 			auto seq = Sequence::create(
 				EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
-				CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
+				CallFunc::create(CC_CALLBACK_0(PlayerL::divideFinish, this)),
 				NULL);
 
 			subdivision->runAction(seq);
@@ -87,11 +120,11 @@ void Player::dividePlayer()
 	}
 	if (flag)
 	{
-		this->scheduleOnce(schedule_selector(Player::setcombine), 15);
+		this->scheduleOnce(schedule_selector(PlayerL::setcombine), 15);
 	}
 }
 
-bool Player::collideBean(Bean* bean)
+bool PlayerL::collideBean(Bean* bean)
 {
 	for (auto division : _divisionlist)
 	{
@@ -108,7 +141,7 @@ bool Player::collideBean(Bean* bean)
 	return false;
 }
 
-bool Player::collideSpore(Spore* spore)
+bool PlayerL::collideSpore(Spore* spore)
 {	
 	if (_state != State::SPIT) 
 	{
@@ -127,7 +160,7 @@ bool Player::collideSpore(Spore* spore)
 	return false;
 }
 
-bool Player::collideThorn(Thorn* thorn)
+bool PlayerL::collideThorn(Thorn* thorn)
 {
 	for (auto division : _divisionlist)
 	{
@@ -163,20 +196,20 @@ bool Player::collideThorn(Thorn* thorn)
 					_combineEnable = false;
 
 					Vec2 vector = Vec2(cosf(6.28*i / PLAYER_MAX_DIVISION), sinf(6.28*i / PLAYER_MAX_DIVISION));
-					auto division1 = Player::createDivision(position, vector, averagescore);
+					auto division1 = PlayerL::createDivision(position, vector, averagescore);
 					Vec2 newposition = vector * (PLAYER_MIN_DIVISION_DISTANCE + division->getRadius());
 					_map->addChild(division1, averagescore);
 
 					auto seq = Sequence::create(
 						EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
-						CallFunc::create(CC_CALLBACK_0(Player::thornFinish, this)),
+						CallFunc::create(CC_CALLBACK_0(PlayerL::thornFinish, this)),
 						NULL
 					);
 
 					division1->runAction(seq);
 					
 				}
-				this->scheduleOnce(schedule_selector(Player::setcombine), 15);
+				this->scheduleOnce(schedule_selector(PlayerL::setcombine), 15);
 				return true;
 				
 			}
@@ -186,7 +219,7 @@ bool Player::collideThorn(Thorn* thorn)
 
 }
 
-bool Player::collidePlayer(Player* player)
+bool PlayerL::collidePlayer(PlayerL* player)
 {
 	bool flag = false;
 	for (int i = 0; i < _divisionlist.size(); i++)
@@ -225,7 +258,7 @@ bool Player::collidePlayer(Player* player)
 	return flag;
 }
 
-void Player::updateDivision()//更新分身位置
+void PlayerL::updateDivision()//更新分身位置
 {
 	auto rect = this->getPlayerRect();
 	if (_state == State::STATIC)
@@ -306,7 +339,7 @@ void Player::updateDivision()//更新分身位置
 							_divisionNum--;
 							
 							_combineEnable = false;
-							this->scheduleOnce(schedule_selector(Player::setcombine), 8);
+							this->scheduleOnce(schedule_selector(PlayerL::setcombine), 8);
 							int score = division1->getScore() + division2->getScore();
 							if (radius1 >= radius2)
 							{
@@ -398,16 +431,16 @@ void Player::updateDivision()//更新分身位置
 	}
 }
 
-void Player::resetPlayer()
+void PlayerL::resetPlayer()
 {
 	int x = rand() % MAP_WIDTH;
 	int y = rand() % MAP_HEIGHT;
 	
-	auto division = Player::createDivision(Vec2(x, y), Vec2::ZERO, PLAYER_INITIAL_SCORE);
+	auto division = PlayerL::createDivision(Vec2(x, y), Vec2::ZERO, PLAYER_INITIAL_SCORE);
 	_map->addChild(division, PLAYER_INITIAL_SCORE);
 }
 
-int Player::getAllScore() 
+int PlayerL::getAllScore() 
 {
 	int score = 0;
 	for (auto division : _divisionlist)
@@ -420,7 +453,7 @@ int Player::getAllScore()
 	return score;
 }
 
-Rect Player::getPlayerRect()
+Rect PlayerL::getPlayerRect()
 {
 	float left, right, up, down;
 
@@ -454,8 +487,9 @@ Rect Player::getPlayerRect()
 	return rect;
 }
 
-void Player::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
+void PlayerL::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
 {
+	_spitTimes += 1;
 	for (auto division : _divisionlist)
 	{
 		if (division != NULL)
@@ -476,12 +510,12 @@ void Player::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
 
 				Vec2 dposition1 = Vec2(position1.x + SPORE_MIN_SPIT_DISTANCE * cosf(angle), position1.y + SPORE_MIN_SPIT_DISTANCE * sinf(angle));
 				auto action = EaseOut::create(MoveTo::create(0.5, dposition1), 1.8f);
-				auto seq1 = Sequence::create(action,CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),NULL);
+				auto seq1 = Sequence::create(action,CallFunc::create(CC_CALLBACK_0(PlayerL::divideFinish, this)),NULL);
 				_map->addChild(spore, spore->getScore());
 				float time = 0.1;
 				auto seq2 = Sequence::create(
 					DelayTime::create(time),
-					CallFunc::create(CC_CALLBACK_0(Player::divideFinish, this)),
+					CallFunc::create(CC_CALLBACK_0(PlayerL::divideFinish, this)),
 					NULL);
 				spore->runAction(seq1);
 				spore->runAction(seq2);
@@ -492,7 +526,7 @@ void Player::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
 	}
 }
 
-int Player::countSpitSpore()
+int PlayerL::countSpitSpore()
 {
 	int count = 0;
 	for (auto division : _divisionlist)
@@ -508,7 +542,7 @@ int Player::countSpitSpore()
 	return count;
 }
 
-void Player::setVector(Vec2 v)
+void PlayerL::setVector(Vec2 v)
 {
 	_state = State::NORMAL;
 

@@ -571,12 +571,33 @@ class PlayerDivision : public ::google::protobuf::Message /* @@protoc_insertion_
   float position_y() const;
   void set_position_y(float value);
 
+  // int32 score = 3;
+  void clear_score();
+  static const int kScoreFieldNumber = 3;
+  ::google::protobuf::int32 score() const;
+  void set_score(::google::protobuf::int32 value);
+
+  // float vector_x = 4;
+  void clear_vector_x();
+  static const int kVectorXFieldNumber = 4;
+  float vector_x() const;
+  void set_vector_x(float value);
+
+  // float vector_y = 5;
+  void clear_vector_y();
+  static const int kVectorYFieldNumber = 5;
+  float vector_y() const;
+  void set_vector_y(float value);
+
   // @@protoc_insertion_point(class_scope:player.PlayerDivision)
  private:
 
   ::google::protobuf::internal::InternalMetadataWithArena _internal_metadata_;
   float position_x_;
   float position_y_;
+  ::google::protobuf::int32 score_;
+  float vector_x_;
+  float vector_y_;
   mutable int _cached_size_;
   friend struct ::protobuf_player_2eproto::TableStruct;
   friend void ::protobuf_player_2eproto::InitDefaultsPlayerDivisionImpl();
@@ -1048,6 +1069,48 @@ inline void PlayerDivision::set_position_y(float value) {
   
   position_y_ = value;
   // @@protoc_insertion_point(field_set:player.PlayerDivision.position_y)
+}
+
+// int32 score = 3;
+inline void PlayerDivision::clear_score() {
+  score_ = 0;
+}
+inline ::google::protobuf::int32 PlayerDivision::score() const {
+  // @@protoc_insertion_point(field_get:player.PlayerDivision.score)
+  return score_;
+}
+inline void PlayerDivision::set_score(::google::protobuf::int32 value) {
+  
+  score_ = value;
+  // @@protoc_insertion_point(field_set:player.PlayerDivision.score)
+}
+
+// float vector_x = 4;
+inline void PlayerDivision::clear_vector_x() {
+  vector_x_ = 0;
+}
+inline float PlayerDivision::vector_x() const {
+  // @@protoc_insertion_point(field_get:player.PlayerDivision.vector_x)
+  return vector_x_;
+}
+inline void PlayerDivision::set_vector_x(float value) {
+  
+  vector_x_ = value;
+  // @@protoc_insertion_point(field_set:player.PlayerDivision.vector_x)
+}
+
+// float vector_y = 5;
+inline void PlayerDivision::clear_vector_y() {
+  vector_y_ = 0;
+}
+inline float PlayerDivision::vector_y() const {
+  // @@protoc_insertion_point(field_get:player.PlayerDivision.vector_y)
+  return vector_y_;
+}
+inline void PlayerDivision::set_vector_y(float value) {
+  
+  vector_y_ = value;
+  // @@protoc_insertion_point(field_set:player.PlayerDivision.vector_y)
 }
 
 // -------------------------------------------------------------------
