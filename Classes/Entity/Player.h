@@ -10,7 +10,7 @@ class Spore;
 class Thorn;
 class PlayerDivision;
 
-class Player :public Node
+class PlayerL :public Node
 {
 public:
 
@@ -23,17 +23,20 @@ public:
 	};
 
 
-	Player() 
+	PlayerL() 
 	{ 
 		_divisionNum = 0;
 	}
-	~Player()
+	~PlayerL()
 	{
 		_divisionlist.clear();
 	}
 
-	static Player* create(const std::string&, Vec2, Node*, int);      //单机版
+	static PlayerL* create(const std::string&, Vec2, Node*, int);      //单机版
 	bool init(const std::string&, Vec2, Node*, int);
+
+	static PlayerL* create(const std::string&, Vec2, Vec2, Node*, int, int, int);
+	bool init(const std::string&, Vec2, Vec2, Node*, int, int, int);
 
 	PlayerDivision* createDivision(Vec2, Vec2, int);
 	void dividePlayer();
@@ -41,7 +44,7 @@ public:
 	bool collideBean(Bean*);
 	bool collideSpore(Spore*);
 	bool collideThorn(Thorn*);
-	bool collidePlayer(Player*);
+	bool collidePlayer(PlayerL*);
 
 	void updateDivision();
 	void resetPlayer();//复活
@@ -69,6 +72,13 @@ public:
 
 	void setcombine(float t) { _combineEnable = true; }
 
+	int getSkin() { return _skinID; }
+
+	void setdivideTimes(int d) { _divideTimes = d; }
+	void setspitTimes(int s) { _spitTimes = s; }
+
+	int getdivideTimes() { return _divideTimes; }
+	int getspitTimes() { return _spitTimes; }
 
 private:
 	Vector<PlayerDivision*> _divisionlist;
@@ -83,6 +93,9 @@ private:
 	int _skinID;
 
 	bool _combineEnable;
+
+	int _divideTimes;
+	int _spitTimes;
 
 };
 #endif // !_PLAYER_H_

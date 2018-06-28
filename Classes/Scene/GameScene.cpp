@@ -18,8 +18,6 @@ bool GameScene::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
-	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BEAN/bean.plist", "BEAN/bean.png");
-
 	auto backbutton = MenuItemImage::create("public/button-back.png",
 		"public/button-back.png",
 		CC_CALLBACK_1(GameScene::menuReturnCallback, this));

@@ -9,12 +9,13 @@
 #include"Classes\Entity\PlayerDivision.h"
 #include"Classes\Entity\Spore.h"
 #include"Classes\Entity\Thorn.h"
+#include"Network\client.h"
 
 USING_NS_CC;
 using namespace ui;
 
 class Bean;
-class Player;
+class PlayerL;
 class Spore;
 class Thorn;
 
@@ -30,6 +31,8 @@ public:
 
 	virtual void update(float t);
 
+
+	/*µ¥»ú°æ*/
 	void initData();
 	void initBean();
 	void initThorn();
@@ -45,11 +48,22 @@ public:
 	void updateView();
 
 	void collidePlayer();
-	void collideBean(Player*);
+	void collideBean(PlayerL*);
 
 	void spitSpore();
 	void divide();
+	/*µ¥»ú°æ*/
+	
+	/*ÍøÂç°æ*/
 
+	void initDataOnline();
+	void initBean(int);
+	void initRival(player::OtherPlayerInfo& allplayer);
+
+	void updateRival(player::OtherPlayerInfo& allplayer);
+
+
+	/*ÍøÂç°æ*/
 	bool onTouchBegan(Touch* touch,Event *event);
 	void onTouchMove(Touch* touch,Event *event);
 	void onTouchEnded(Touch* touch,Event *event);
@@ -59,14 +73,15 @@ public:
 
 private:
 	Node * _map;
-	Player* _player;
+	PlayerL* _player;
 	Vector<Bean*> _beanlist;
-	Map<std::string, Player*> _rivalMap;
+	Map<std::string, PlayerL*> _rivalMap;
+	Map<std::string, SingePlayerInfo*> _rivalTag;
 	Map<int,Thorn*> _thornMap;
 	Map<int, Spore*> _sporeMap;
 	float _mapscale;
 	int sporeID;
-
+	SingePlayerInfo playerinfo;
 };
 
 

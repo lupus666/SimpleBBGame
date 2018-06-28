@@ -2,7 +2,6 @@
 #include"MainScene.h"
 
 
-
 GameLayer::~GameLayer()
 {
 	_rivalMap.clear();
@@ -24,6 +23,7 @@ bool GameLayer::init()
 	_map = Node::create();
 	_map->setContentSize(Size(MAP_WIDTH, MAP_HEIGHT));
 	this->addChild(_map, 0);
+
 
 	initData();
 
@@ -86,7 +86,7 @@ void GameLayer::initPlayer()  //+++++++++
 	float x = rand() % MAP_WIDTH;
 	float y = rand() % MAP_HEIGHT;
 
-	_player = Player::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, rand()%8 + 1);
+	_player = PlayerL::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, rand()%8 + 1);
 	_player->setLocalZOrder(_player->getAllScore());
 	_map->addChild(_player);
 }
@@ -108,7 +108,7 @@ void GameLayer::addThorn(float t)
 	ThornID++;
 }
 
-void GameLayer::collideBean(Player* player)
+void GameLayer::collideBean(PlayerL* player)
 {
 	for (auto bean : _beanlist)
 	{
@@ -293,7 +293,36 @@ void GameLayer::divide()
 
 void GameLayer::update(float t)
 {
+	Client client(grpc::CreateChannel(
+		"localhost:50051", grpc::InsecureChannelCredentials()));
+
+	std::string name = _player->getName();
+	playerinfo.set_name(name);
+	playerinfo.set_skin(_player->getSkin());
+	playerinfo.set_divisionnum(_player->getDivisionNum());
+	playerinfo.set_dividetimes(_player->getdivideTimes());
+	playerinfo.set_spittimes(_player->getspitTimes());
+	playerinfo.set_vector_x(_player->getVector().x);
+	playerinfo.set_vector_y(_player->getVector().y);
+
+	int size = _player->getDivisionNum();
+	for (int i = 0; i < size; i++) 
+	{
+		auto division1 = _player->getDivisionlist().at(i);
+		player::PlayerDivision* division = playerinfo.add_division();
+		division->set_position_x(division1->getPosition().x);
+		division->set_position_y(division1->getPosition().y);
+		division->set_score(division1->getScore());
+		division->set_vector_x(division1->getvector().x);
+		division->set_vector_y(division1->getvector().x);
+	}
+	MapInfo mapinfo;
+	mapinfo = client.sendPlayerInfo(playerinfo);
+	player::OtherPlayerInfo allrival;
+	allrival = mapinfo.allrival();
+	
 	updateBean();
+	updateRival(allrival);
 	updatePlayer();
 	updateSpore();
 	updateThorn();
@@ -335,8 +364,118 @@ void GameLayer::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)
 	{
 		Director::getInstance()->replaceScene(TransitionFade::create(0.5, Main::createScene()));
 	}
+}
 
 void GameLayer::onKeyReleased(EventKeyboard::KeyCode keycode, Event* event)
+{
+
+}
+
+void GameLayer::initBean(int seed)
+{
+	scand(seed);
+	for (int i = 0; i < MAP_DIVISION_X; i++)
+	{
+		for (int j = 0; j < MAP_DIVISION_Y; j++)
+		{
+			int m = 0;
+			while (m < MAX_DIVISION_BEAN_NUM)
+			{
+				int shape = rand() % 4 + 3;
+				int color = rand() % 6 + 1;
+				float x = rand_0_1();
+				float y = rand_0_1();
+
+				std::string path = StringUtils::format("bean_polygon%d_%d.png", shape, color);
+				auto bean = Bean::create(path.c_str());
+
+				bean->setPosition(Vec2(SCREEN_WIDTH*(i + x), SCREEN_HEIGHT*(j + y)));
+				bean->setLocalZOrder(bean->getScore());
+				_map->addChild(bean);
+				_beanlist.pushBack(bean);
+				m++;
+			}
+		}
+	}
+}
+
+void GameLayer::initDataOnline()
+{
+	Client client(grpc::CreateChannel(
+		"localhost:50051", grpc::InsecureChannelCredentials()));
+
+	std::string name = _player->getName();
+	playerinfo.set_name(name);
+	playerinfo.set_skin(_player->getSkin());
+	playerinfo.set_divisionnum(_player->getDivisionNum());
+	playerinfo.set_dividetimes(0);
+	playerinfo.set_spittimes(0);
+	playerinfo.set_vector_x(0);
+	playerinfo.set_vector_y(0);
+
+
+	player::PlayerDivision* division = playerinfo.add_division();
+	division->set_position_x(_player->getDivisionlist().at(0)->getPosition().x);
+	division->set_position_y(_player->getDivisionlist().at(0)->getPosition().y);
+	division->set_score(_player->getDivisionlist().at(0)->getScore());
+	MapInfo mapinfo;
+	mapinfo = client.sendPlayerInfo(playerinfo);
+
+
+
+	int seed = mapinfo.beanseed();
+	initBean(seed);           //豆子初始化
+
+
+	player::OtherPlayerInfo allplayer;
+	allplayer = mapinfo.allrival();
+	initRival(allplayer);		//敌人初始化
+	
+}
+
+void GameLayer::initRival(player::OtherPlayerInfo& allplayer)
+{
+	player::OtherPlayerInfo _allplayer;
+	int size = allplayer.rival_size();
+	for (int i = 0; i < size; i++)
+	{
+		SingePlayerInfo rivalinfo;
+		rivalinfo = allplayer.rival(i);
+		std::string name = rivalinfo.name();
+		if (name == _player->getName())
+		{
+			continue;
+		}
+		_rivalTag.insert(rivalinfo.name(), &rivalinfo);
+
+
+		float v_x = rivalinfo.vector_x();
+		float v_y = rivalinfo.vector_y();
+		int skinID = rivalinfo.skin();
+
+		auto rival = PlayerL::create(name, Vec2(0, 0), Vec2(v_x, v_y), _map, skinID);
+		_map->addChild(rival);
+		_rivalMap.insert(name, rival);
+
+		int size1 = rivalinfo.division_size();
+		for (int j = 0; j < size1; j++)
+		{
+			player::PlayerDivision division;
+			division = rivalinfo.division(j);
+			float p_x = division.position_x();
+			float p_y = division.position_y();
+			int score = division.score();
+			float V_x = division.vector_x();
+			float V_y = division.vector_y();
+
+			auto division1 = rival->createDivision(Vec2(p_x, p_y), Vec2(V_x, V_y), score);
+			_map->addChild(division1, score);
+		}
+
+	}
+}
+
+void GameLayer::updateRival(player::OtherPlayerInfo& allplayer)
 {
 
 }

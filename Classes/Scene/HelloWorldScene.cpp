@@ -30,6 +30,8 @@ bool HelloWorld::init()
 	Size visibleSize = Director::getInstance()->getVisibleSize();
 	Vec2 origin = Director::getInstance()->getVisibleOrigin();
 
+	SpriteFrameCache::getInstance()->addSpriteFramesWithFile("BEAN/bean.plist", "BEAN/bean.png");
+
 	auto bg = Sprite::create("HelloWorld/background.png");
 	bg->setPosition(visibleSize.width / 2, visibleSize.height / 2);
 	this->addChild(bg);

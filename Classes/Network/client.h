@@ -19,10 +19,12 @@ using player::SingePlayerInfo;
 using player::MapInfo;
 using player::Player;
 
+
 class Client {
 public:
 	explicit Client(std::shared_ptr<Channel> channel)
 		:_stub(Player::NewStub(channel)){}
+	
 
 	MapInfo sendPlayerInfo(const SingePlayerInfo& playerInfo)
 	{
@@ -63,6 +65,7 @@ public:
 			return fault;
 		}
 	}
+
 
 private:
 
