@@ -25,10 +25,10 @@ bool GameLayer::init()
 	this->addChild(_map, 0);
 
 
-	//initData();
-	sporeID = 0;
-	initPlayer();
-	initDataOnline();
+	initData();
+	//sporeID = 0;
+	//initPlayer();
+	//initDataOnline();
 
 	auto touchlistener = EventListenerTouchOneByOne::create();
 	touchlistener->onTouchBegan = CC_CALLBACK_2(GameLayer::onTouchBegan, this);
@@ -89,7 +89,7 @@ void GameLayer::initPlayer()  //+++++++++
 	float x = rand() % MAP_WIDTH;
 	float y = rand() % MAP_HEIGHT;
 
-	_player = PlayerL::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, rand()%8 + 1);
+	_player = PlayerL::create(UserDefault::getInstance()->getStringForKey("playername"), Vec2(x, y), _map, UserDefault::getInstance()->getIntegerForKey(SKIN_KEY));
 	_player->setLocalZOrder(_player->getAllScore());
 	_map->addChild(_player);
 }
@@ -296,6 +296,7 @@ void GameLayer::divide()
 
 void GameLayer::update(float t)
 {
+	/*
 	Client client(grpc::CreateChannel(
 		"localhost:50051", grpc::InsecureChannelCredentials()));
 
@@ -326,9 +327,11 @@ void GameLayer::update(float t)
 
 	player::OtherPlayerInfo allrival;
 	allrival = mapinfo.allrival();
-	
+	*/
+
+
 	updateBean();
-	updateRival(allrival);
+	//updateRival(allrival);
 	updatePlayer();
 	updateSpore();
 	updateThorn();

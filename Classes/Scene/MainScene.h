@@ -4,7 +4,8 @@
 #include "cocos2d.h"
 #include "ui\CocosGUI.h"
 #include "SettingScene.h"
-#include "LoginScene.h"
+#include "GameScene.h"
+#include "SkinScene.h"
 #include "SystemHeader.h"
 
 USING_NS_CC;
@@ -12,6 +13,7 @@ USING_NS_CC;
 typedef  enum {
 	MenuItemStart,
 	MenuItemSetting,
+	MenuItemSkin
 } ActionType;
 
 class Main :public cocos2d::Layer
@@ -24,7 +26,7 @@ public:
 	void menuItemCallback(cocos2d::Ref *sender);
 	CREATE_FUNC(Main);
 private:
-	MenuItemImage * gameItem;
+	//MenuItemImage * gameItem;
 	//MenuItemImage * chatItem;
 
 };
