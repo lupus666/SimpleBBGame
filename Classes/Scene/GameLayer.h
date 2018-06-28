@@ -76,7 +76,6 @@ private:
 	PlayerL* _player;
 	Vector<Bean*> _beanlist;
 	Map<std::string, PlayerL*> _rivalMap;
-	Map<std::string, SingePlayerInfo*> _rivalTag;
 	Map<int,Thorn*> _thornMap;
 	Map<int, Spore*> _sporeMap;
 	float _mapscale;

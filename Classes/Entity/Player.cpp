@@ -81,7 +81,7 @@ PlayerDivision* PlayerL::createDivision(Vec2 position, Vec2 vector, int score)
 
 void PlayerL::dividePlayer()
 {
-	divideTimes += 1;
+	_divideTimes += 1;
 	bool flag = false;
 	int size = _divisionlist.size();
 	for (int i = 0; i < size; i++)
@@ -196,20 +196,20 @@ bool PlayerL::collideThorn(Thorn* thorn)
 					_combineEnable = false;
 
 					Vec2 vector = Vec2(cosf(6.28*i / PLAYER_MAX_DIVISION), sinf(6.28*i / PLAYER_MAX_DIVISION));
-					auto division1 = Player::createDivision(position, vector, averagescore);
+					auto division1 = PlayerL::createDivision(position, vector, averagescore);
 					Vec2 newposition = vector * (PLAYER_MIN_DIVISION_DISTANCE + division->getRadius());
 					_map->addChild(division1, averagescore);
 
 					auto seq = Sequence::create(
 						EaseOut::create(MoveBy::create(0.5f, newposition), 1.8f),
-						CallFunc::create(CC_CALLBACK_0(Player::thornFinish, this)),
+						CallFunc::create(CC_CALLBACK_0(PlayerL::thornFinish, this)),
 						NULL
 					);
 
 					division1->runAction(seq);
 					
 				}
-				this->scheduleOnce(schedule_selector(Player::setcombine), 15);
+				this->scheduleOnce(schedule_selector(PlayerL::setcombine), 15);
 				return true;
 				
 			}
@@ -489,7 +489,7 @@ Rect PlayerL::getPlayerRect()
 
 void PlayerL::spitSpore(Map<int,Spore*>& sporelist,int& sporeID)
 {
-	spitTimes += 1;
+	_spitTimes += 1;
 	for (auto division : _divisionlist)
 	{
 		if (division != NULL)

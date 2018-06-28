@@ -73,6 +73,7 @@ public:
 	void setcombine(float t) { _combineEnable = true; }
 
 	int getSkin() { return _skinID; }
+	void setSkin(int id) { _skinID = id; }
 
 	void setdivideTimes(int d) { _divideTimes = d; }
 	void setspitTimes(int s) { _spitTimes = s; }

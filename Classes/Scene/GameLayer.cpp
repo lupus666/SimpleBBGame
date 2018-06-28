@@ -25,7 +25,10 @@ bool GameLayer::init()
 	this->addChild(_map, 0);
 
 
-	initData();
+	//initData();
+	sporeID = 0;
+	initPlayer();
+	initDataOnline();
 
 	auto touchlistener = EventListenerTouchOneByOne::create();
 	touchlistener->onTouchBegan = CC_CALLBACK_2(GameLayer::onTouchBegan, this);
@@ -316,8 +319,11 @@ void GameLayer::update(float t)
 		division->set_vector_x(division1->getvector().x);
 		division->set_vector_y(division1->getvector().x);
 	}
+
 	MapInfo mapinfo;
 	mapinfo = client.sendPlayerInfo(playerinfo);
+
+
 	player::OtherPlayerInfo allrival;
 	allrival = mapinfo.allrival();
 	
@@ -363,6 +369,7 @@ void GameLayer::onKeyPressed(EventKeyboard::KeyCode keycode, Event *event)
 	if (keycode == EventKeyboard::KeyCode::KEY_ESCAPE)
 	{
 		Director::getInstance()->replaceScene(TransitionFade::create(0.5, Main::createScene()));
+		_player->setSkin(0);
 	}
 }
 
@@ -373,7 +380,7 @@ void GameLayer::onKeyReleased(EventKeyboard::KeyCode keycode, Event* event)
 
 void GameLayer::initBean(int seed)
 {
-	scand(seed);
+	srand(seed);
 	for (int i = 0; i < MAP_DIVISION_X; i++)
 	{
 		for (int j = 0; j < MAP_DIVISION_Y; j++)
@@ -435,7 +442,6 @@ void GameLayer::initDataOnline()
 
 void GameLayer::initRival(player::OtherPlayerInfo& allplayer)
 {
-	player::OtherPlayerInfo _allplayer;
 	int size = allplayer.rival_size();
 	for (int i = 0; i < size; i++)
 	{
@@ -446,14 +452,14 @@ void GameLayer::initRival(player::OtherPlayerInfo& allplayer)
 		{
 			continue;
 		}
-		_rivalTag.insert(rivalinfo.name(), &rivalinfo);
-
 
 		float v_x = rivalinfo.vector_x();
 		float v_y = rivalinfo.vector_y();
 		int skinID = rivalinfo.skin();
+		int dT = rivalinfo.dividetimes();
+		int sT = rivalinfo.spittimes();
 
-		auto rival = PlayerL::create(name, Vec2(0, 0), Vec2(v_x, v_y), _map, skinID);
+		auto rival = PlayerL::create(name, Vec2(0, 0), Vec2(v_x, v_y), _map, skinID, dT, sT);
 		_map->addChild(rival);
 		_rivalMap.insert(name, rival);
 
@@ -477,5 +483,76 @@ void GameLayer::initRival(player::OtherPlayerInfo& allplayer)
 
 void GameLayer::updateRival(player::OtherPlayerInfo& allplayer)
 {
+	int sizeOn = allplayer.rival_size();
+	int sizeLo = _rivalMap.size();
+	for (int i = 0; i < sizeOn; i++)
+	{
+		SingePlayerInfo rivalinfo = allplayer.rival(i);
+		std::string name = rivalinfo.name();
+		if (name != _player->getName())
+		{
+			auto iter = _rivalMap.find(name);
+			if (iter == _rivalMap.end() && rivalinfo.skin() != 0)
+			{
+				float v_x = rivalinfo.vector_x();
+				float v_y = rivalinfo.vector_y();
+				int skinID = rivalinfo.skin();
+				int dT = rivalinfo.dividetimes();
+				int sT = rivalinfo.spittimes();
 
+				auto rival = PlayerL::create(name, Vec2(0, 0), Vec2(v_x, v_y), _map, skinID, dT, sT);
+				_map->addChild(rival);
+				_rivalMap.insert(name, rival);
+
+				int size1 = rivalinfo.division_size();
+				for (int j = 0; j < size1; j++)
+				{
+					player::PlayerDivision division;
+					division = rivalinfo.division(j);
+					float p_x = division.position_x();
+					float p_y = division.position_y();
+					int score = division.score();
+					float V_x = division.vector_x();
+					float V_y = division.vector_y();
+
+					auto division1 = rival->createDivision(Vec2(p_x, p_y), Vec2(V_x, V_y), score);
+					_map->addChild(division1, score);
+				}
+			}
+			else
+			{
+				auto rival = _rivalMap.at(name);
+				int skinID = rivalinfo.skin();
+				if (skinID == 0)
+				{
+					_rivalMap.erase(name);
+					rival->removeFromParentAndCleanup(true);
+					continue;
+				}
+				float v_x = rivalinfo.vector_x();
+				float v_y = rivalinfo.vector_y();
+				
+
+
+				rival->setVector(Vec2(v_x, v_y));
+				rival->updateDivision();
+
+
+
+				int dT = rivalinfo.dividetimes();
+				int sT = rivalinfo.spittimes();
+				int d = rival->getdivideTimes();
+				int s = rival->getspitTimes();
+				if (dT != d)
+				{
+					rival->dividePlayer();
+				}
+				if (sT != s)
+				{
+					rival->spitSpore(_sporeMap,sporeID);
+				}
+			}
+		}
+		
+	}
 }
