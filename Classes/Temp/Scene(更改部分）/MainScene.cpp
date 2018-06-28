@@ -34,7 +34,7 @@ bool Main::init()
 		"scene/loading/start-down.png",
 		CC_CALLBACK_1(Main::menuItemCallback, this));
 	startMenuItem->setTag(ActionType::MenuItemStart);
-	startMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(origin.x + visibleSize.width / 2 - 60, origin.y + visibleSize.height / 4 * 3)));
+	startMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(origin.x + visibleSize.width / 2, origin.y + visibleSize.height / 4 * 3)));
 
 	// ÉèÖÃÍ¼Æ¬²Ëµ¥
 	MenuItemImage *settingMenuItem = MenuItemImage::create(
@@ -42,10 +42,18 @@ bool Main::init()
 		"scene/loading/setting-down.png",
 		CC_CALLBACK_1(Main::menuItemCallback, this));
 	settingMenuItem->setTag(ActionType::MenuItemSetting);
-	settingMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(origin.x + visibleSize.width / 2 + 60, origin.y + visibleSize.height / 4 * 3)));
+	settingMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(origin.x + visibleSize.width / 2 - 120, origin.y + visibleSize.height / 4 * 3)));
+
+	//Æ¤·ôÍ¼Æ¬²Ëµ¥
+	MenuItemImage *skinMenuItem = MenuItemImage::create(
+		"scene/loading/skin-up.png",
+		"scene/loading/skin-down.png",
+		CC_CALLBACK_1(Main::menuItemCallback, this));
+	skinMenuItem->setTag(ActionType::MenuItemSkin);
+	skinMenuItem->setPosition(Director::getInstance()->convertToGL(Vec2(origin.x + visibleSize.width / 2 + 120, origin.y + visibleSize.height / 4 * 3)));
 
 	
-	Menu* mu = Menu::create(startMenuItem, settingMenuItem, NULL);
+	Menu* mu = Menu::create(startMenuItem, settingMenuItem, skinMenuItem, NULL);
 	mu->setPosition(Vec2::ZERO);
 	this->addChild(mu);
 
@@ -69,6 +77,8 @@ void Main::menuItemCallback(cocos2d::Ref *sender)
 	case ActionType::MenuItemSetting:
 		tsc = TransitionFade::create(1.0f, Setting::createScene());
 		break;
+	case ActionType::MenuItemSkin:
+		tsc = TransitionFade::create(1.0f, Skin::createScene());
 	}
 	if (tsc)
 		Director::getInstance()->replaceScene(tsc);
